@@ -8,9 +8,9 @@ const stage = new PIXI.Container();
 const graphics = new PIXI.Graphics();
 const nodes = [];
 const connectors = [];
-const NUM_NODES = 100;
+const NUM_NODES = 160;
 const MAX_DIST = 200;
-const FG_COLOR = 0x858585;
+const FG_COLOR = 0xAAAAAA;
 const BG_COLOR = 0x454545;
 
 renderer.backgroundColor = BG_COLOR;
@@ -41,13 +41,8 @@ function animate() {
 
 function redraw() {
   graphics.clear();
-  nodes.forEach(n => {
-    graphics.beginFill(0xFFFFFF, 1);
-    graphics.drawCircle(n.x, n.y, 3);
-    graphics.endFill();
-  }); 
   connectors.forEach(set => {
-    graphics.lineStyle(1.5, FG_COLOR, 1);
+    graphics.lineStyle(1.5, FG_COLOR, set[2]);
     graphics.moveTo(set[0].x, set[0].y);
     graphics.lineTo(set[1].x, set[1].y);
   });
@@ -91,7 +86,7 @@ function update() {
     while(j < nn) {
       n2 = nodes[j];
       d = getDistance(n.x, n.y, n2.x, n2.y);
-      if (d <= MAX_DIST) connectors.push([n, n2]);
+      if (d <= MAX_DIST) connectors.push([n, n2, 1 - (d / MAX_DIST)]);
       j++;
     }
   });
