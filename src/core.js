@@ -7,9 +7,13 @@ const renderer = PIXI.autoDetectRenderer(screenWidth, screenHeight, {antialias:t
 const stage = new PIXI.Container();
 const graphics = new PIXI.Graphics();
 const nodes = [];
-const randSpeed = (a,b) => parseFloat((((a - b) * Math.random()) + b).toFixed(1));
+const connectors = [];
+const NUM_NODES = 100;
+const MAX_DIST = 200;
+const FG_COLOR = 0x858585;
+const BG_COLOR = 0x454545;
 
-renderer.backgroundColor = 0x878787;
+renderer.backgroundColor = BG_COLOR;
 renderer.autoResize = true;
 renderer.view.style.position = "absolute";
 renderer.view.style.display = "block";
@@ -18,7 +22,8 @@ document.body.appendChild(renderer.view);
 window.onresize = resizeHandler;
 
 stage.addChild(graphics);
-createNode();
+Array(NUM_NODES).fill(1).forEach(createNode);
+update();
 animate();
 
 function resizeHandler () {
@@ -34,6 +39,33 @@ function animate() {
   renderer.render(stage);
 }
 
+function redraw() {
+  graphics.clear();
+  nodes.forEach(n => {
+    graphics.beginFill(0xFFFFFF, 1);
+    graphics.drawCircle(n.x, n.y, 3);
+    graphics.endFill();
+  }); 
+  connectors.forEach(set => {
+    graphics.lineStyle(1.5, FG_COLOR, 1);
+    graphics.moveTo(set[0].x, set[0].y);
+    graphics.lineTo(set[1].x, set[1].y);
+  });
+}
+
+/**********************
+ * NODES
+ *********************/
+function randSpeed(a,b) {
+  return parseFloat((((a - b) * Math.random()) + b).toFixed(1));
+}
+
+function getDistance(x1, y1, x2, y2) {
+  let dx = x2 - x1;
+  let dy = y2 - y1;
+  return Math.sqrt((dx * dx) + (dy * dy));
+}
+
 function createNode() {
   nodes.push({
     x: Math.random() * window.innerWidth,
@@ -44,19 +76,23 @@ function createNode() {
 }
 
 function update() {
-  nodes.forEach(n => {
+  const nn = nodes.length;
+  connectors.length = 0;
+
+  nodes.forEach((n, i) => {
     n.x += n.vx; 
     n.y += n.vy
     if (n.x < 0 || n.x > screenWidth) n.vx *= -1;
     if (n.y < 0 || n.y > screenHeight) n.vy *= -1; 
-  });
-}
 
-function redraw(c) {
-  graphics.clear();
-  nodes.forEach(n => {
-    graphics.beginFill(0xFFFFFF, 1);
-    graphics.drawCircle(n.x, n.y, 5);
-    graphics.endFill();
-  })
+    let j = i + 1;
+    let n2;
+    let d;
+    while(j < nn) {
+      n2 = nodes[j];
+      d = getDistance(n.x, n.y, n2.x, n2.y);
+      if (d <= MAX_DIST) connectors.push([n, n2]);
+      j++;
+    }
+  });
 }

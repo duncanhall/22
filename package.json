@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cp ./node_modules/pixi.js/bin/pixi.js lib/pixi.js && cp ./node_modules/pixi.js/bin/pixi.js.map ./lib/pixi.js.map && babel ./src -d ./lib --watch --source-maps"
+    "dev": "cp ./node_modules/pixi.js/bin/pixi.min.js lib/pixi.min.js && cp ./node_modules/pixi.js/bin/pixi.js.map ./lib/pixi.js.map && babel ./src -d ./lib --watch --source-maps"
   },
   "repository": {
     "type": "git",
