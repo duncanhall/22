@@ -42,7 +42,7 @@ function animate() {
 function redraw() {
   graphics.clear();
   connectors.forEach(set => {
-    graphics.lineStyle(1.5, FG_COLOR, set[2]);
+    graphics.lineStyle(5 * set[2], FG_COLOR, set[2]);
     graphics.moveTo(set[0].x, set[0].y);
     graphics.lineTo(set[1].x, set[1].y);
   });
